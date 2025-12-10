@@ -1,4 +1,4 @@
-// colony-metrics/agent/main.go
+// ColonyOS_Metric_Exporter/agent/main.go
 
 // vår agent as of now, sole purpose is to send dummy data to backend
 

@@ -1,4 +1,5 @@
-module colony-metrics
+// ColonyOS_Metric_Collector/go.mod
+module ColonyOS_Metric_Collector
 
 go 1.24.10
 

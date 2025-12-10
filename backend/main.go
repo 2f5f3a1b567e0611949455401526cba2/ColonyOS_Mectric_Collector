@@ -1,37 +1,54 @@
-// colony-metrics/backend/main.go
+// ColonyOS_Metric_Exporter/backend/main.go
+
 package main
 
 import (
-    "log"
-    "net/http"
+	"ColonyOS_Metric_Collector/backend/routes"
+	"ColonyOS_Metric_Collector/backend/storage"
 
-    "github.com/gin-gonic/gin"
-    "colony-metrics/backend/models"
-    "colony-metrics/backend/storage"
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-    r := gin.Default()
+	// changes:initializing mongodb once and not every call :)
 
-    r.POST("/metrics", func(c *gin.Context) {
-        var m models.Metric
-        if err := c.ShouldBindJSON(&m); err != nil {
-            c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-            return
-        }
+	if err := storage.InitMongo(
+		"mongodb://localhost:27017",
+		"colony_metrics",
+		"metrics",
+	); err != nil {
+		log.Fatal("fatal error: ", err)
+	}
 
-        log.Printf("Received metric: %+v\n", m)
-        if err := storage.InitMongo("mongodb://localhost:27017", "colony_metrics", "metrics"); err != nil {
-            log.Fatal("mongo init failed:", err) } 
-        c.Status(http.StatusCreated)
-    })
+	r := gin.Default()
 
-    // temp health check
-    r.GET("/health", func(c *gin.Context) {
-        c.JSON(http.StatusOK, gin.H{"status": "ok"})
-    })
+	// register routes:
+	routes.RegisterMetricRoutes(r)
 
-    if err := r.Run(":8080"); err != nil {
-        log.Fatal(err)
-    }
+	/*
+		r.POST("/metrics", func(c *gin.Context) {
+			var m models.Metric
+			if err := c.ShouldBindJSON(&m); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			log.Printf("Received metric: %+v\n", m)
+			if err := storage.InitMongo("mongodb://localhost:27017", "colony_metrics", "metrics"); err != nil {
+				log.Fatal("mongo init failed:", err)
+			}
+			c.Status(http.StatusCreated)
+		})*/
+
+	// temp health check
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+
+	if err := r.Run(":8080"); err != nil {
+		log.Fatal("no :8080 error: ", err)
+	}
 }
