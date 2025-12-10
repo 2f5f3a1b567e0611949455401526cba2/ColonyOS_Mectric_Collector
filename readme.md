@@ -11,12 +11,11 @@ curl -X POST http://localhost:8080/metrics \
 
 
 
-
+```
 What @firrenbirren02 wants!
 
 
 [ Metric Agent ] -> [ Backend ] -> [ DB ] -> [ Grafana ]
-
 
 MVP!
 METRIC AGENT: 
@@ -36,3 +35,5 @@ GRAFANA:
 
 BACKEND: 
 LOCALHOST:27017 KÖRS
+
+``` 
