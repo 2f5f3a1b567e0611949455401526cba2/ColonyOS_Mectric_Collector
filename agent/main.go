@@ -5,42 +5,42 @@
 package main
 
 import (
-    "bytes"
-    "encoding/json"
-    "log"
-    "math/rand"
-    "net/http"
-    "time"
+	"bytes"
+	"encoding/json"
+	"log"
+	"math/rand"
+	"net/http"
+	"time"
 )
 
 type Metric struct {
-    Host      string    `json:"host"`
-    CPU       float64   `json:"cpu"`
-    Memory    float64   `json:"memory"`
-    Timestamp time.Time `json:"timestamp"`
+	Host      string    `json:"host"`
+	CPU       float64   `json:"cpu"`
+	Memory    float64   `json:"memory"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 func main() {
-    backendURL := "http://localhost:8080/metrics"
+	backendURL := "http://localhost:8080/metrics"
 
-    for {
-        m := Metric{
-            Host:      "agent-1",
-            CPU:       rand.Float64() * 100,
-            Memory:    rand.Float64() * 100,
-            Timestamp: time.Now(),
-        }
+	for {
+		m := Metric{
+			Host:      "agent-1",
+			CPU:       65 + rand.Float64()*(85-65),
+			Memory:    65 + rand.Float64()*(85-65),
+			Timestamp: time.Now(),
+		}
 
-        body, _ := json.Marshal(m)
+		body, _ := json.Marshal(m)
 
-        resp, err := http.Post(backendURL, "application/json", bytes.NewReader(body))
-        if err != nil {
-            log.Println("error sending metric:", err)
-        } else {
-            resp.Body.Close()
-            log.Println("metric sent:", m.CPU)
-        }
+		resp, err := http.Post(backendURL, "application/json", bytes.NewReader(body))
+		if err != nil {
+			log.Println("error sending metric:", err)
+		} else {
+			resp.Body.Close()
+			log.Println("metric sent:", m.CPU)
+		}
 
-        time.Sleep(5 * time.Second)
-    }
+		time.Sleep(1 * time.Second)
+	}
 }
